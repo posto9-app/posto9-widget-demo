@@ -72,6 +72,28 @@ long-lived credential in the browser. Expect your token endpoint to be called
 when the page opens, every 8 minutes or so while it stays open, and each time
 the portal moves to another account.
 
+### Do my CSMs sign in to Posto9?
+
+No. The token **is** the sign-in. A CSM signs in to your portal only; when the
+chat opens, your backend vouches for them and Posto9 trusts that. Posto9 never
+asks for its own password, and does not need a Posto9 session in the browser:
+the chat works in a browser that has never opened Posto9.
+
+What every CSM does need is a **Posto9 account in your workspace**. The token
+signs in an existing member; it never creates an account or grants access. So:
+
+| Who               | When         | What                                                                                                                                            |
+| ----------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| An Owner or Admin | Once         | Steps 1 to 6 of this guide.                                                                                                                     |
+| An Owner or Admin | Once per CSM | Invite the CSM to the Posto9 workspace, with the **same email your portal knows them by**. The CSM accepts the invitation. Viewers cannot chat. |
+| The CSM           | Every day    | Sign in to your portal. The chat just works.                                                                                                    |
+
+If your portal knows a CSM by a different email than Posto9 does (an alias, an
+old domain), Posto9 refuses the token with "Your email is not a member of this
+Posto9 workspace who can chat". Send the email they are registered with in Posto9.
+When a CSM leaves, remove them from the Posto9 workspace: their portal account
+alone no longer opens the chat.
+
 ## Step 1. Generate the secret
 
 In Posto9, open **Setup → Tenant → Chat widget** and click **Generate secret**.
@@ -104,6 +126,35 @@ https://cs.example.com:8443
 `https` only, no paths, no wildcards, at most 20. A page whose origin is not on
 the list cannot start a chat. If your portal runs on several hosts (staging and
 production, or one per region), list each of them.
+
+### An internal portal
+
+The widget works with a portal that is only reachable inside your company
+network. List its internal address as the origin, for example
+`https://cs.acme.internal`. Posto9 never connects to your portal: it only
+compares the address the browser reports with your list. Every connection comes
+from the CSM's browser:
+
+```text
+CSM's browser ──▶ your portal's backend   (the token; stays inside your network)
+CSM's browser ──▶ Posto9                  (the widget, the chat; outbound internet)
+```
+
+No VPN, firewall opening or inbound access to your network is needed. What does
+matter:
+
+- **The portal is served over https.** A certificate from your company's own
+  certificate authority is fine: only the browser checks it.
+- **The origin is exactly what the browser shows.** Single-word hosts
+  (`https://portal`) and IPv4 addresses (`https://10.0.4.12`) work; IPv6
+  addresses do not. If CSMs reach the portal by more than one name
+  (`portal` and `portal.acme.corp`), list each one.
+- **CSMs' browsers can reach Posto9.** If your outbound traffic goes through a
+  proxy, allow the Posto9 address, and make sure the proxy does not buffer
+  streaming responses: if it does, replies only appear after a page refresh.
+
+The chat keeps its session in memory, with no cookies, so browsers that block
+third-party cookies do not affect it.
 
 ## Step 3. Add a token endpoint to your backend
 
