@@ -1,0 +1,12 @@
+{
+  "name": "posto9-widget-demo",
+  "version": "1.0.0",
+  "description": "Acme Success Hub: a demo CS portal with the Posto9 chat widget embedded.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node server.js"
+  }
+}

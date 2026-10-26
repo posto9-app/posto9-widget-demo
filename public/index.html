@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acme Success Hub</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%235b4bff'/%3E%3Cpath d='M9 23l7-15 7 15M12 18h8' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f6fb;
+    --panel: #ffffff;
+    --ink: #151a2d;
+    --ink-2: #4a5170;
+    --ink-3: #8a90a8;
+    --line: #e8eaf3;
+    --brand: #5b4bff;
+    --brand-2: #8f5bff;
+    --brand-soft: #efedff;
+    --side: #11142a;
+    --side-2: #1b1f3b;
+    --good: #12b76a;
+    --good-soft: #e7f8ef;
+    --warn: #f79009;
+    --warn-soft: #fef3e2;
+    --bad: #f04438;
+    --bad-soft: #fdecea;
+    --radius: 14px;
+    --shadow: 0 1px 2px rgba(17, 20, 42, .04), 0 4px 16px rgba(17, 20, 42, .06);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+  body { margin: 0; font: 14px/1.5 'Plus Jakarta Sans', system-ui, sans-serif; color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; }
+  button { font: inherit; color: inherit; }
+  .app { display: grid; grid-template-columns: 236px 1fr; height: 100vh; }
+
+  /* Sidebar */
+  .side { background: var(--side); color: #c9cde6; display: flex; flex-direction: column; padding: 20px 14px; gap: 6px; }
+  .logo { display: flex; align-items: center; gap: 10px; padding: 4px 10px 22px; color: #fff; font-weight: 800; font-size: 18px; letter-spacing: -.3px; }
+  .logo .mark { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(135deg, var(--brand), var(--brand-2)); display: grid; place-items: center; box-shadow: 0 6px 18px rgba(91, 75, 255, .45); }
+  .logo small { display: block; font-size: 11px; font-weight: 500; color: #7d83a8; letter-spacing: 0; }
+  .nav-label { font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: #5d6390; padding: 14px 12px 6px; }
+  .nav a { display: flex; align-items: center; gap: 11px; padding: 9px 12px; border-radius: 10px; color: inherit; text-decoration: none; cursor: pointer; font-weight: 500; }
+  .nav a:hover { background: var(--side-2); color: #fff; }
+  .nav a.on { background: linear-gradient(90deg, rgba(91, 75, 255, .28), rgba(91, 75, 255, .08)); color: #fff; }
+  .nav svg { width: 18px; height: 18px; flex: none; opacity: .9; }
+  .nav .count { margin-left: auto; background: var(--side-2); color: #aab0d6; font-size: 11px; padding: 1px 8px; border-radius: 99px; }
+  .side .sp { flex: 1; }
+  .me { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; background: var(--side-2); cursor: pointer; position: relative; }
+  .me .who { min-width: 0; }
+  .me b { display: block; color: #fff; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .me span { font-size: 11px; color: #7d83a8; }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 13px; color: #fff; flex: none; }
+  .menu { position: absolute; bottom: 58px; left: 0; right: 0; background: #fff; color: var(--ink); border-radius: 12px; box-shadow: 0 12px 40px rgba(0, 0, 0, .3); padding: 6px; display: none; z-index: 10; }
+  .menu.open { display: block; }
+  .menu .h { font-size: 11px; text-transform: uppercase; letter-spacing: .6px; color: var(--ink-3); padding: 8px 10px 4px; }
+  .menu button { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+  .menu button:hover { background: var(--bg); }
+  .menu button.on { font-weight: 700; color: var(--brand); }
+
+  /* Main */
+  .main { display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+  .top { height: 64px; flex: none; display: flex; align-items: center; gap: 14px; padding: 0 28px; background: var(--panel); border-bottom: 1px solid var(--line); }
+  .crumbs { color: var(--ink-3); font-size: 13px; }
+  .crumbs b { color: var(--ink); font-weight: 600; }
+  .search { margin-left: auto; display: flex; align-items: center; gap: 8px; width: 320px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink-3); background: var(--bg); }
+  .search input { border: 0; outline: 0; background: none; font: inherit; flex: 1; color: var(--ink); }
+  .search kbd { font: 11px ui-monospace, monospace; border: 1px solid var(--line); border-radius: 5px; padding: 1px 5px; background: #fff; }
+  .icon-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line); background: #fff; display: grid; place-items: center; cursor: pointer; position: relative; }
+  .icon-btn .dot { position: absolute; top: 8px; right: 9px; width: 7px; height: 7px; border-radius: 50%; background: var(--bad); border: 2px solid #fff; }
+  .content { flex: 1; overflow: auto; padding: 24px 28px 120px; }
+
+  /* Accounts layout */
+  .split { display: grid; grid-template-columns: 330px 1fr; gap: 20px; align-items: start; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+  .list { position: sticky; top: 0; max-height: calc(100vh - 112px); display: flex; flex-direction: column; }
+  .list-head { padding: 16px 16px 10px; }
+  .list-head h3 { margin: 0 0 10px; font-size: 15px; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { border: 1px solid var(--line); background: #fff; padding: 4px 10px; border-radius: 99px; font-size: 12px; cursor: pointer; color: var(--ink-2); font-weight: 500; }
+  .chip.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .rows { overflow: auto; padding: 4px 8px 8px; }
+  .row { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 10px; cursor: pointer; }
+  .row:hover { background: var(--bg); }
+  .row.on { background: var(--brand-soft); }
+  .row .meta { min-width: 0; flex: 1; }
+  .row b { display: block; font-size: 13.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row span { font-size: 12px; color: var(--ink-3); }
+  .row .arr { font-size: 12.5px; font-weight: 600; color: var(--ink-2); text-align: right; }
+  .logo-sq { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; font-weight: 800; font-size: 14px; flex: none; }
+  .hdot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; vertical-align: 1px; }
+
+  /* Account detail */
+  .hero { padding: 22px 24px; display: flex; gap: 18px; align-items: center; }
+  .hero .logo-sq { width: 60px; height: 60px; font-size: 22px; border-radius: 16px; }
+  .hero h1 { margin: 0; font-size: 24px; letter-spacing: -.4px; }
+  .hero .sub { color: var(--ink-3); font-size: 13px; display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap; margin-top: 6px; }
+  .hero { flex-wrap: wrap; }
+  .pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+  .hero .actions { margin-left: auto; display: flex; gap: 8px; }
+  .btn { border: 1px solid var(--line); background: #fff; padding: 8px 14px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 7px; }
+  .btn.primary { background: var(--brand); border-color: var(--brand); color: #fff; box-shadow: 0 4px 14px rgba(91, 75, 255, .35); }
+  .tabs { display: flex; gap: 4px; padding: 0 24px; border-top: 1px solid var(--line); }
+  .tab { padding: 12px 12px; cursor: pointer; color: var(--ink-3); font-weight: 600; border-bottom: 2px solid transparent; font-size: 13px; }
+  .tab.on { color: var(--brand); border-color: var(--brand); }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 20px 0; }
+  .kpi { padding: 16px 18px; }
+  .kpi .l { font-size: 12px; color: var(--ink-3); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+  .kpi .v { font-size: 24px; font-weight: 800; letter-spacing: -.5px; margin-top: 4px; display: flex; align-items: center; gap: 10px; }
+  .kpi .d { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+  .grid2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
+  .sec { padding: 18px 20px; }
+  .sec h4 { margin: 0 0 14px; font-size: 14px; display: flex; align-items: center; justify-content: space-between; }
+  .sec h4 a { font-size: 12px; color: var(--brand); font-weight: 600; cursor: pointer; }
+  .tk { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+  .tk:first-of-type { border-top: 0; }
+  .tk .t { flex: 1; min-width: 0; }
+  .tk .t b { display: block; font-weight: 600; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tk .t span { font-size: 12px; color: var(--ink-3); }
+  .person { display: flex; gap: 12px; align-items: center; }
+  .person b { display: block; }
+  .person span { color: var(--ink-3); font-size: 12.5px; }
+  .tl { position: relative; padding-left: 18px; }
+  .tl div { position: relative; padding: 0 0 14px; font-size: 13px; }
+  .tl div::before { content: ''; position: absolute; left: -18px; top: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+  .tl div::after { content: ''; position: absolute; left: -15px; top: 16px; bottom: -2px; width: 2px; background: var(--line); }
+  .tl div:last-child::after { display: none; }
+  .tl span { display: block; color: var(--ink-3); font-size: 12px; }
+
+  /* Home */
+  .welcome { padding: 26px 28px; background: linear-gradient(120deg, #1b1650 0%, #3a2bb8 55%, #7b4dff 100%); color: #fff; border: 0; position: relative; overflow: hidden; }
+  .welcome h2 { margin: 0; font-size: 24px; letter-spacing: -.4px; }
+  .welcome p { margin: 6px 0 0; color: #d9d5ff; max-width: 560px; }
+  .welcome::after { content: ''; position: absolute; right: -60px; top: -80px; width: 280px; height: 280px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.18), transparent 65%); }
+  .tbl { width: 100%; border-collapse: collapse; }
+  .tbl th { text-align: left; font-size: 11.5px; text-transform: uppercase; letter-spacing: .5px; color: var(--ink-3); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  .tbl td { padding: 11px 10px; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .tbl tr { cursor: pointer; }
+  .tbl tbody tr:hover td { background: var(--bg); }
+  .tbl tr:last-child td { border-bottom: 0; }
+
+  /* Demo drawer */
+  .demo-fab { position: fixed; left: 14px; bottom: 100px; width: 208px; z-index: 50; background: transparent; border: 1px dashed #3b4170; color: #8f95c4; padding: 6px 12px; border-radius: 99px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  .demo-fab:hover { color: #fff; border-color: #6c63ff; }
+  .demo { position: fixed; left: 236px; bottom: 100px; z-index: 50; width: 340px; background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 16px 50px rgba(17, 20, 42, .2); padding: 14px; display: none; }
+  .demo.open { display: block; }
+  .demo h5 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .6px; color: var(--ink-3); }
+  .demo .r { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .demo .btn { padding: 5px 10px; font-size: 12px; }
+  .demo #log { font: 11px/1.45 ui-monospace, Menlo, monospace; max-height: 140px; overflow: auto; background: var(--bg); border-radius: 8px; padding: 8px; color: var(--ink-2); }
+  .demo #log .err { color: var(--bad); }
+  .empty { padding: 60px; text-align: center; color: var(--ink-3); }
+  .signin { position: fixed; inset: 0; z-index: 100; display: none; place-items: center; background: radial-gradient(circle at 20% 10%, #3a2bb8 0%, #11142a 55%); }
+  .signin.open { display: grid; }
+  .signin .box { width: 420px; background: #fff; border-radius: 20px; padding: 32px; box-shadow: 0 30px 80px rgba(0, 0, 0, .35); }
+  .signin .logo { color: var(--ink); padding: 0 0 18px; }
+  .signin h2 { margin: 0 0 4px; font-size: 22px; letter-spacing: -.3px; }
+  .signin p { margin: 0 0 18px; color: var(--ink-3); font-size: 13px; }
+  .signin button { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; border: 1px solid var(--line); background: #fff; border-radius: 12px; padding: 12px; margin-bottom: 8px; cursor: pointer; }
+  .signin button:hover { border-color: var(--brand); background: var(--brand-soft); }
+  .signin button b { display: block; }
+  .signin button span { color: var(--ink-3); font-size: 12px; }
+  .signin small { display: block; margin-top: 14px; color: var(--ink-3); font-size: 11.5px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="logo">
+      <div class="mark"><svg width="18" height="18" viewBox="0 0 32 32"><path d="M8 25l8-18 8 18M11.5 19h9" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div>Acme<small>Success Hub</small></div>
+    </div>
+    <nav class="nav">
+      <a data-view="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+      <a data-view="accounts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Accounts<span class="count" id="acct-count"></span></a>
+      <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H5.2L4 17.2z"/></svg>Tickets<span class="count">27</span></a>
+      <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>Renewals</a>
+      <div class="nav-label">Insights</div>
+      <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg>Reports</a>
+      <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Settings</a>
+    </nav>
+    <div class="sp"></div>
+    <div class="me" id="me">
+      <div class="avatar" id="me-av"></div>
+      <div class="who"><b id="me-name"></b><span>Customer Success</span></div>
+      <div class="menu" id="me-menu"></div>
+    </div>
+  </aside>
+
+  <section class="main">
+    <header class="top">
+      <div class="crumbs" id="crumbs"></div>
+      <label class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" placeholder="Search accounts"><kbd>⌘K</kbd></label>
+      <div class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><span class="dot"></span></div>
+    </header>
+    <div class="content" id="content"></div>
+  </section>
+</div>
+
+<div class="signin" id="signin"><div class="box">
+  <div class="logo"><div class="mark"><svg width="18" height="18" viewBox="0 0 32 32"><path d="M8 25l8-18 8 18M11.5 19h9" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div>Acme<small style="color:var(--ink-3)">Success Hub</small></div></div>
+  <h2>Sign in</h2><p>Demo sign-in: pick who you are. Posto9 opens the chat as this person.</p>
+  <div id="signin-users"></div>
+  <small>This stands in for your portal's real login. The token endpoint signs for the person in this session, never for an email the browser sends.</small>
+</div></div>
+
+<button class="demo-fab" onclick="document.getElementById('demo').classList.toggle('open')">Demo controls</button>
+<div class="demo" id="demo">
+  <h5>Posto9 widget</h5>
+  <div class="r">
+    <button class="btn" onclick="Posto9('open')">Open</button>
+    <button class="btn" onclick="Posto9('close')">Close</button>
+    <button class="btn" onclick="signOut()">Sign out</button>
+    <button class="btn" onclick="boot()">Boot again</button>
+  </div>
+  <div class="r">
+    <button class="btn" onclick="openAccount('hubspot:not-in-posto9', true)">Record not linked in Posto9</button>
+  </div>
+  <h5>Event log</h5>
+  <div id="log"></div>
+</div>
+
+<script src="__POSTO9_URL__/widget/v1/posto9-widget.js" async></script>
+<script>
+  window.Posto9 = window.Posto9 || function () { (Posto9.q = Posto9.q || []).push(arguments); };
+
+  const S = { view: 'home', account: '', email: '', members: [], accounts: [], filter: 'all', q: '', tab: 'overview' };
+  const $ = (id) => document.getElementById(id);
+  const PALETTE = [['#efedff', '#5b4bff'], ['#e6f6ff', '#0b84d6'], ['#e7f8ef', '#0e9f5b'], ['#fff1e6', '#e0620b'], ['#fdeef6', '#c4247a'], ['#eef2f6', '#41536b'], ['#fff8db', '#b58100']];
+
+  function log(msg, err) {
+    const d = document.createElement('div');
+    if (err) d.className = 'err';
+    d.textContent = new Date().toLocaleTimeString() + '  ' + msg;
+    $('log').prepend(d);
+  }
+  const hash = (s) => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+  const tone = (s) => PALETTE[hash(s) % PALETTE.length];
+  const initials = (n) => String(n || '?').split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+  const money = (v) => v == null ? 'n/a' : v >= 1e6 ? '$' + (v / 1e6).toFixed(1) + 'M' : v >= 1e3 ? '$' + Math.round(v / 1e3) + 'K' : '$' + Math.round(v);
+  const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  function band(h) {
+    if (h == null) return { label: 'Not scored', c: 'var(--ink-3)', bg: 'var(--bg)' };
+    if (h >= 70) return { label: 'Healthy', c: 'var(--good)', bg: 'var(--good-soft)' };
+    if (h >= 40) return { label: 'Watch', c: 'var(--warn)', bg: 'var(--warn-soft)' };
+    return { label: 'At risk', c: 'var(--bad)', bg: 'var(--bad-soft)' };
+  }
+  function daysTo(iso) { if (!iso) return null; return Math.round((new Date(iso) - new Date()) / 864e5); }
+  function logoSq(a, cls = '') { const [bg, fg] = tone(a.name); return `<div class="logo-sq ${cls}" style="background:${bg};color:${fg}">${initials(a.name)}</div>`; }
+
+  // Your portal backend's token endpoint (server.js). It signs for the CSM in the
+  // session; the browser only says which account is on screen.
+  async function tokenProvider(customer) {
+    const r = await fetch('/api/posto9-token?customer=' + encodeURIComponent(customer || ''));
+    if (!r.ok) throw new Error('Posto9 token endpoint answered ' + r.status);
+    log('token for ' + S.email + (customer ? ' locked to ' + customer : ''));
+    return r.text();
+  }
+  function boot() { Posto9('boot', { tokenProvider, customer: S.account }); log('boot' + (S.account ? ' on ' + S.account : '')); }
+
+  async function signInAs(email) {
+    const r = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
+    if (!r.ok) { log('sign-in refused for ' + email, true); return; }
+    const wasIn = !!S.email;
+    S.email = email;
+    $('signin').classList.remove('open');
+    await loadAccounts();
+    renderMe(); render();
+    if (wasIn) Posto9('shutdown');
+    log('signed in as ' + email);
+    boot();
+  }
+  async function signOut() {
+    Posto9('shutdown');
+    await fetch('/api/logout', { method: 'POST' });
+    log('signed out: widget shut down');
+    S.email = ''; S.account = ''; S.view = 'home';
+    showSignIn();
+  }
+  function showSignIn() {
+    $('signin-users').innerHTML = S.members.map((m) => `<button data-email="${esc(m.email)}"><div class="avatar" style="background:${tone(m.email)[1]}">${initials(m.name)}</div><div><b>${esc(m.name)}</b><span>${esc(m.email)}</span></div></button>`).join('');
+    $('signin').classList.add('open');
+  }
+  async function loadAccounts() {
+    const doc = await (await fetch('/api/accounts')).json();
+    S.accounts = doc.accounts.map((a) => ({ ...a, id: a.customer, renewal: a.renewal_in_days == null ? null : new Date(Date.now() + a.renewal_in_days * 864e5).toISOString().slice(0, 10) }));
+    $('acct-count').textContent = S.accounts.length;
+  }
+
+  function openAccount(id, unknown) {
+    S.view = 'accounts'; S.account = id; S.tab = 'overview';
+    Posto9('update', { customer: id });
+    log('update customer=' + (id || '(none)'));
+    render();
+    if (unknown) Posto9('open');
+  }
+  function goHome() {
+    S.view = 'home'; S.account = '';
+    Posto9('update', { customer: '' });
+    log('update customer=(none)');
+    render();
+  }
+
+  function renderMe() {
+    const m = S.members.find((x) => x.email === S.email) || { name: S.email, email: S.email };
+    const [bg, fg] = tone(m.email);
+    $('me-av').style.background = fg; $('me-av').textContent = initials(m.name);
+    $('me-name').textContent = m.name;
+    $('me-menu').innerHTML = '<div class="h">Switch user (demo)</div>' + S.members
+      .map((x) => `<button class="${x.email === S.email ? 'on' : ''}" data-email="${esc(x.email)}">${esc(x.name)}<br><span style="color:var(--ink-3);font-size:11px">${esc(x.email)}</span></button>`).join('') + '<button data-signout="1" style="color:var(--bad)">Sign out</button>';
+  }
+
+  function accountRows() {
+    const q = S.q.toLowerCase();
+    return S.accounts.filter((a) => {
+      if (q && !a.name.toLowerCase().includes(q)) return false;
+      if (S.filter === 'risk') return a.health != null && a.health < 40;
+      if (S.filter === 'watch') return a.health != null && a.health < 70;
+      if (S.filter === 'renewal') { const d = daysTo(a.renewal); return d != null && d >= 0 && d <= 120; }
+      return true;
+    });
+  }
+
+  function sparkline(seed, color) {
+    let v = 50 + (hash(seed) % 20); const pts = [];
+    for (let i = 0; i < 12; i++) { v = Math.max(12, Math.min(95, v + ((hash(seed + 'w' + i) % 21) - 9))); pts.push(v); }
+    const W = 520, H = 140, step = W / (pts.length - 1);
+    const line = pts.map((p, i) => `${i ? 'L' : 'M'}${(i * step).toFixed(1)} ${(H - p * 1.3).toFixed(1)}`).join(' ');
+    const area = line + ` L${W} ${H} L0 ${H} Z`;
+    const labels = pts.map((_, i) => i % 3 === 0 ? `<text x="${i * step}" y="${H + 16}" font-size="10" fill="#8a90a8">W${i + 1}</text>` : '').join('');
+    return `<svg viewBox="0 -6 ${W} ${H + 24}" width="100%" height="170" preserveAspectRatio="none">
+      <defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".28"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
+      ${[0, 1, 2, 3].map((i) => `<line x1="0" x2="${W}" y1="${i * H / 3}" y2="${i * H / 3}" stroke="#eef0f6"/>`).join('')}
+      <path d="${area}" fill="url(#g)"/><path d="${line}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>${labels}</svg>`;
+  }
+  function ring(h) {
+    const b = band(h), r = 15, c = 2 * Math.PI * r, f = h == null ? 0 : h / 100;
+    return `<svg width="38" height="38" viewBox="0 0 38 38"><circle cx="19" cy="19" r="${r}" fill="none" stroke="#eef0f6" stroke-width="5"/><circle cx="19" cy="19" r="${r}" fill="none" stroke="${b.c}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${c * f} ${c}" transform="rotate(-90 19 19)"/></svg>`;
+  }
+
+  const TICKETS = ['SSO login loop for new users', 'CSV export times out on large reports', 'Webhook retries not firing', 'Request: custom role for auditors', 'Billing contact change', 'Dashboard widgets slow to load', 'API rate limit questions', 'Data sync delayed overnight', 'Invite emails landing in spam'];
+  function tickets(a) {
+    const n = 3 + (hash(a.name) % 3);
+    return Array.from({ length: n }, (_, i) => {
+      const t = TICKETS[hash(a.name + i) % TICKETS.length];
+      const pr = ['Urgent', 'High', 'Normal', 'Low'][hash(a.name + 'p' + i) % 4];
+      const age = 1 + (hash(a.name + 'a' + i) % 14);
+      return { t, pr, age, id: 4100 + (hash(a.name + i) % 900) };
+    });
+  }
+  const PR = { Urgent: ['var(--bad-soft)', 'var(--bad)'], High: ['var(--warn-soft)', 'var(--warn)'], Normal: ['var(--brand-soft)', 'var(--brand)'], Low: ['var(--bg)', 'var(--ink-3)'] };
+
+  function renderList() {
+    const rows = accountRows();
+    return `<div class="card list">
+      <div class="list-head"><h3>Accounts</h3><div class="chips">
+        ${[['all', 'All'], ['watch', 'Needs attention'], ['risk', 'At risk'], ['renewal', 'Renewing ≤120d']].map(([k, l]) => `<span class="chip ${S.filter === k ? 'on' : ''}" data-filter="${k}">${l}</span>`).join('')}
+      </div></div>
+      <div class="rows">${rows.map((a) => { const b = band(a.health); return `<div class="row ${S.account === a.id ? 'on' : ''}" data-id="${esc(a.id)}">
+        ${logoSq(a)}<div class="meta"><b>${esc(a.name)}</b><span><i class="hdot" style="background:${b.c}"></i>${b.label}${a.industry ? ' · ' + esc(a.industry) : ''}</span></div>
+        <div class="arr">${money(a.arr)}<br><span>ARR</span></div></div>`; }).join('') || '<div class="empty">No accounts match</div>'}</div>
+    </div>`;
+  }
+
+  function renderAccount() {
+    const a = S.accounts.find((x) => x.id === S.account);
+    if (!a) {
+      return `<div class="card empty"><h3 style="color:var(--ink)">Record ${esc(S.account)} is not linked</h3>
+        <p>This record exists in the portal but not in Posto9. The Posto9 chat says so and opens without an account lock.</p></div>`;
+    }
+    const b = band(a.health), d = daysTo(a.renewal), tk = tickets(a);
+    const owner = S.members.find((m) => m.email === S.email);
+    return `
+      <div class="card">
+        <div class="hero">${logoSq(a)}
+          <div><h1>${esc(a.name)}</h1><div class="sub">
+            ${a.domain ? `<span>🌐 ${esc(a.domain)}</span>` : ''}${a.industry ? `<span>${esc(a.industry)}</span>` : ''}${a.region ? `<span>📍 ${esc(a.region)}</span>` : ''}
+            <span class="pill" style="background:${b.bg};color:${b.c}"><i class="hdot" style="background:${b.c};margin:0"></i>${b.label}</span>
+            ${a.plan ? `<span class="pill" style="background:var(--brand-soft);color:var(--brand)">${esc(a.plan)}</span>` : ''}
+          </div></div>
+          <div class="actions"><button class="btn">Log activity</button><button class="btn primary" onclick="Posto9('open')">
+            <svg width="14" height="14" viewBox="0 0 917 1025" fill="none" stroke="#fff" stroke-width="130"><path d="M58 0V760A210 210 0 0 0 268 970H440"/><path d="M58 50H272A100 100 0 0 1 372 150V237A100 100 0 0 1 272 337H58"/><path d="M859 0V760A210 210 0 0 1 649 970H477"/><path d="M859 50H645A100 100 0 0 0 545 150V237A100 100 0 0 0 645 337H859"/><rect x="219" y="496" width="477" height="301" rx="100"/></svg>
+            Ask Posto9</button></div>
+        </div>
+        <div class="tabs">${['Overview', 'Tickets', 'Usage', 'Contacts', 'Billing'].map((t) => `<div class="tab ${t.toLowerCase() === S.tab ? 'on' : ''}">${t}</div>`).join('')}</div>
+      </div>
+      <div class="kpis">
+        <div class="card kpi"><div class="l">ARR</div><div class="v">${money(a.arr)}</div><div class="d">${money(a.arr / 12)} MRR</div></div>
+        <div class="card kpi"><div class="l">Health</div><div class="v">${ring(a.health)}${a.health ?? 'n/a'}</div><div class="d" style="color:${b.c}">${b.label}</div></div>
+        <div class="card kpi"><div class="l">Renewal</div><div class="v">${d == null ? 'n/a' : d < 0 ? 'Lapsed' : d + 'd'}</div><div class="d">${a.renewal ? new Date(a.renewal).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'No contract end on file'}</div></div>
+        <div class="card kpi"><div class="l">Open tickets</div><div class="v">${tk.length}</div><div class="d">${tk.filter((t) => t.pr === 'Urgent' || t.pr === 'High').length} high priority</div></div>
+      </div>
+      <div class="grid2">
+        <div style="display:grid;gap:16px">
+          <div class="card sec"><h4>Weekly active users <a>Last 12 weeks</a></h4>${sparkline(a.name, '#5b4bff')}</div>
+          <div class="card sec"><h4>Open tickets <a>View all</a></h4>
+            ${tk.map((t) => `<div class="tk"><span class="pill" style="background:${PR[t.pr][0]};color:${PR[t.pr][1]}">${t.pr}</span><div class="t"><b>${t.t}</b><span>#${t.id} · opened ${t.age}d ago</span></div></div>`).join('')}
+          </div>
+        </div>
+        <div style="display:grid;gap:16px;align-content:start">
+          <div class="card sec"><h4>Primary contact</h4>
+            ${a.contact ? `<div class="person"><div class="avatar" style="background:${tone(a.contact)[1]}">${initials(a.contact)}</div><div><b>${esc(a.contact)}</b><span>${esc(a.contact_email || '')}</span></div></div>` : '<span style="color:var(--ink-3)">No contact on file</span>'}
+          </div>
+          <div class="card sec"><h4>Account team</h4>
+            <div class="person"><div class="avatar" style="background:${tone(S.email)[1]}">${initials(owner ? owner.name : S.email)}</div><div><b>${esc(owner ? owner.name : S.email)}</b><span>Customer Success Manager</span></div></div>
+          </div>
+          <div class="card sec"><h4>Recent activity</h4><div class="tl">
+            <div><b>QBR scheduled</b><span>Next month · with ${esc(a.contact || 'the sponsor')}</span></div>
+            <div><b>Ticket #${tk[0].id} escalated</b><span>${tk[0].age}d ago</span></div>
+            <div><b>Usage review sent</b><span>2 weeks ago</span></div>
+          </div></div>
+        </div>
+      </div>`;
+  }
+
+  function renderHome() {
+    const total = S.accounts.reduce((s, a) => s + (a.arr || 0), 0);
+    const risk = S.accounts.filter((a) => a.health != null && a.health < 40);
+    const watch = S.accounts.filter((a) => a.health != null && a.health < 70);
+    const upcoming = S.accounts.filter((a) => { const d = daysTo(a.renewal); return d != null && d >= 0; }).sort((x, y) => new Date(x.renewal) - new Date(y.renewal)).slice(0, 6);
+    const me = S.members.find((m) => m.email === S.email);
+    return `
+      <div class="card welcome"><h2>Good ${new Date().getHours() < 12 ? 'morning' : 'afternoon'}, ${esc((me ? me.name : 'there').split(' ')[0])} 👋</h2>
+        <p>You have ${watch.length} accounts that need attention and ${upcoming.length} renewals coming up. Ask Posto9 in the corner for what to do first.</p></div>
+      <div class="kpis">
+        <div class="card kpi"><div class="l">Book ARR</div><div class="v">${money(total)}</div><div class="d">${S.accounts.length} accounts</div></div>
+        <div class="card kpi"><div class="l">At risk</div><div class="v" style="color:var(--bad)">${risk.length}</div><div class="d">${money(risk.reduce((s, a) => s + (a.arr || 0), 0))} ARR</div></div>
+        <div class="card kpi"><div class="l">Needs attention</div><div class="v" style="color:var(--warn)">${watch.length}</div><div class="d">health under 70</div></div>
+        <div class="card kpi"><div class="l">Open tickets</div><div class="v">27</div><div class="d">6 high priority</div></div>
+      </div>
+      <div class="grid2">
+        <div class="card sec"><h4>Upcoming renewals <a onclick="S.filter='renewal';S.view='accounts';render()">See all</a></h4>
+          <table class="tbl"><thead><tr><th>Account</th><th>ARR</th><th>Health</th><th>Renews</th></tr></thead><tbody>
+          ${upcoming.map((a) => { const b = band(a.health); return `<tr data-id="${esc(a.id)}"><td><b>${esc(a.name)}</b></td><td>${money(a.arr)}</td><td><span class="pill" style="background:${b.bg};color:${b.c}">${a.health ?? 'n/a'}</span></td><td>${daysTo(a.renewal)}d</td></tr>`; }).join('') || '<tr><td colspan="4" style="color:var(--ink-3)">No renewals on file</td></tr>'}
+          </tbody></table></div>
+        <div class="card sec"><h4>Needs attention</h4>
+          ${watch.slice(0, 6).map((a) => { const b = band(a.health); return `<div class="row" data-id="${esc(a.id)}">${logoSq(a)}<div class="meta"><b>${esc(a.name)}</b><span><i class="hdot" style="background:${b.c}"></i>Health ${a.health} · ${b.label}</span></div><div class="arr">${money(a.arr)}</div></div>`; }).join('') || '<div class="empty">All accounts healthy</div>'}
+        </div>
+      </div>`;
+  }
+
+  function render() {
+    document.querySelectorAll('.nav a').forEach((n) => n.classList.toggle('on', n.dataset.view === S.view));
+    const a = S.accounts.find((x) => x.id === S.account);
+    $('crumbs').innerHTML = S.view === 'home' ? '<b>Home</b>' : 'Accounts' + (S.account ? ` / <b>${esc(a ? a.name : S.account)}</b>` : '');
+    $('content').innerHTML = S.view === 'home' ? renderHome()
+      : `<div class="split">${renderList()}<div>${S.account ? renderAccount() : '<div class="card empty">Pick an account. The Posto9 chat locks to the account you open.</div>'}</div></div>`;
+  }
+
+  document.addEventListener('click', (e) => {
+    const row = e.target.closest('[data-id]');
+    if (row) return openAccount(row.dataset.id);
+    const f = e.target.closest('[data-filter]');
+    if (f) { S.filter = f.dataset.filter; render(); return; }
+    const nav = e.target.closest('.nav a[data-view]');
+    if (nav) { nav.dataset.view === 'home' ? goHome() : (S.view = 'accounts', render()); return; }
+    if (e.target.closest('[data-signout]')) { $('me-menu').classList.remove('open'); signOut(); return; }
+    const who = e.target.closest('[data-email]');
+    if (who) { $('me-menu').classList.remove('open'); signInAs(who.dataset.email); return; }
+    if (e.target.closest('#me')) { $('me-menu').classList.toggle('open'); return; }
+    $('me-menu').classList.remove('open');
+  });
+  $('q').addEventListener('input', (e) => { S.q = e.target.value; if (S.view !== 'accounts') S.view = 'accounts'; render(); $('q').focus(); });
+  window.addEventListener('error', (e) => log(String(e.message), true));
+
+  (async () => {
+    const { user, users } = await (await fetch('/api/session')).json();
+    S.members = users;
+    if (!user) return showSignIn();
+    S.email = user.email;
+    await loadAccounts();
+    renderMe(); render(); boot();
+  })();
+</script>
+</body>
+</html>
